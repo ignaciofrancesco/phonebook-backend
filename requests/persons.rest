@@ -1,8 +1,20 @@
 ### DELETE person
 DELETE http://localhost:3001/api/persons/1
 
-### POST
+### POST create person
 POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+  "name": "meme",
+  "number": "342323 856"
+}
+
+### DELETE person INTERNET
+DELETE https://phonebook-backend-9yx1.onrender.com/api/persons/1
+
+### POST create person to INTERNET
+POST https://phonebook-backend-9yx1.onrender.com/api/persons
 Content-Type: application/json
 
 {

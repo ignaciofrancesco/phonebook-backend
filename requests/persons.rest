@@ -6,8 +6,8 @@ POST http://localhost:3001/api/persons
 Content-Type: application/json
 
 {
-  "name": "meme",
-  "number": "342323 856"
+  "name": "ori",
+  "number": "3498 568 1232"
 }
 
 ### DELETE person INTERNET

@@ -1,6 +1,7 @@
 const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
+const Person = require("./models/person");
 
 const app = express();
 
@@ -32,59 +33,29 @@ app.use(
 
 /* DATA */
 
-let persons = [
-  {
-    id: "1",
-    name: "Arto Hellas",
-    number: "040-123456",
-  },
-  {
-    id: "2",
-    name: "Ada Lovelace",
-    number: "39-44-5323523",
-  },
-  {
-    id: "3",
-    name: "Dan Abramov",
-    number: "12-43-234345",
-  },
-  {
-    id: "4",
-    name: "Mary Poppendieck",
-    number: "39-23-6423122",
-  },
-];
-
 /* ENDPOINTS */
 
-app.get("/", (request, response) => {
-  response.send("<h1>Phonebook</h1>");
-});
-
 app.get("/api/persons", (request, response) => {
-  response.json(persons);
+  Person.find({}).then((result) => {
+    response.json(result);
+  });
 });
 
 app.get("/info", (request, response) => {
-  response.send(
-    `<p>Phonebook has info for ${persons.length} people.</p><p>${request.timeReceived}</p>`
-  );
+  Person.find({}).then((persons) => {
+    response.send(
+      `<p>Phonebook has info for ${persons.length} people.</p><p>${request.timeReceived}</p>`
+    );
+  });
 });
 
 app.get("/api/persons/:id", (request, response) => {
   // Look for the person
   const personId = request.params.id;
-  const person = persons.find((p) => {
-    return p.id === personId;
+
+  Person.findById(personId).then((person) => {
+    response.json(person);
   });
-
-  // If the person doesn't exist, return error
-  if (!person) {
-    return response.status(404).json({ error: "The person cannot be found." });
-  }
-
-  // Else, return data
-  response.json(person);
 });
 
 app.delete("/api/persons/:id", (request, response) => {
@@ -114,31 +85,28 @@ app.post("/api/persons", (request, response) => {
   }
 
   // Validate no duplicates
-  const personDuplicate = persons.find((p) => {
+  /* const personDuplicate = persons.find((p) => {
     return p.name.trim().toUpperCase() === data.name.trim().toUpperCase();
   });
-
+ 
   if (personDuplicate) {
     return response.status(409).json({
       error: `The person ${data.name} already exists in the phonebook.`,
     });
   }
-
-  // Generate new id
-  const newId = generateId();
+*/
 
   // Create new person
-  const newPerson = {
-    id: String(newId),
+  const newPerson = new Person({
     name: data.name,
     number: data.number,
-  };
+  });
 
-  // Save new person
-  persons = [...persons, newPerson];
-
-  // Produce response
-  response.json(newPerson);
+  // Save de person
+  newPerson.save().then((result) => {
+    console.log(`Person ${data.name} saved to the DB.`);
+    response.json(result);
+  });
 });
 
 /* PRIVATE FUNCTIONS */

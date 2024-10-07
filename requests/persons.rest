@@ -1,5 +1,8 @@
+### GET person
+GET http://localhost:3001/api/persons/670302282d24990624006895
+
 ### DELETE person
-DELETE http://localhost:3001/api/persons/1
+DELETE http://localhost:3001/api/persons/66f74904b485aaf41e60815d
 
 ### POST create person
 POST http://localhost:3001/api/persons
@@ -10,8 +13,18 @@ Content-Type: application/json
   "number": "3498 568 1232"
 }
 
+### PUT update person
+PUT http://localhost:3001/api/persons/670302282d24990624006895
+Content-Type: application/json
+
+{
+  "name": "oriana pivato"
+}
+
+####################### FOR INTERNET APP 
+
 ### DELETE person INTERNET
-DELETE https://phonebook-backend-9yx1.onrender.com/api/persons/1
+DELETE https://phonebook-backend-9yx1.onrender.com/api/persons/66f74904b485aaf41e60815d
 
 ### POST create person to INTERNET
 POST https://phonebook-backend-9yx1.onrender.com/api/persons

@@ -31,47 +31,52 @@ app.use(
   })
 );
 
-/* DATA */
-
 /* ENDPOINTS */
 
-app.get("/api/persons", (request, response) => {
-  Person.find({}).then((result) => {
-    response.json(result);
-  });
+app.get("/api/persons", (request, response, next) => {
+  Person.find({})
+    .then((result) => {
+      response.json(result);
+    })
+    .catch((error) => next(error));
 });
 
-app.get("/info", (request, response) => {
-  Person.find({}).then((persons) => {
-    response.send(
-      `<p>Phonebook has info for ${persons.length} people.</p><p>${request.timeReceived}</p>`
-    );
-  });
+app.get("/info", (request, response, next) => {
+  Person.find({})
+    .then((persons) => {
+      response.send(
+        `<p>Phonebook has info for ${persons.length} people.</p><p>${request.timeReceived}</p>`
+      );
+    })
+    .catch((error) => next(error));
 });
 
-app.get("/api/persons/:id", (request, response) => {
+app.get("/api/persons/:id", (request, response, next) => {
   // Look for the person
   const personId = request.params.id;
 
-  Person.findById(personId).then((person) => {
-    response.json(person);
-  });
+  Person.findById(personId)
+    .then((person) => {
+      response.json(person);
+    })
+    .catch((error) => next(error));
 });
 
-app.delete("/api/persons/:id", (request, response) => {
+app.delete("/api/persons/:id", (request, response, next) => {
   // Get the id
   const personId = request.params.id;
 
-  // Filter out the person
-  persons = persons.filter((p) => {
-    return p.id !== personId;
-  });
+  console.log(personId);
 
-  // Produce response
-  response.status(204).end();
+  Person.findByIdAndDelete(personId)
+    .then((result) => {
+      console.log(result);
+      response.status(204).end();
+    })
+    .catch((error) => next(error));
 });
 
-app.post("/api/persons", (request, response) => {
+app.post("/api/persons", (request, response, next) => {
   // Get the person from the body
   const data = request.body;
 
@@ -103,28 +108,45 @@ app.post("/api/persons", (request, response) => {
   });
 
   // Save de person
-  newPerson.save().then((result) => {
-    console.log(`Person ${data.name} saved to the DB.`);
-    response.json(result);
-  });
+  newPerson
+    .save()
+    .then((result) => {
+      console.log(`Person ${data.name} saved to the DB.`);
+      response.json(result);
+    })
+    .catch((error) => next(error));
 });
 
-/* PRIVATE FUNCTIONS */
+app.put("/api/persons/:id", (request, response, next) => {
+  const personId = request.params.id;
+  const body = request.body;
 
-const generateId = () => {
-  let newId = Math.ceil(Math.random() * 10000000000);
+  const person = {
+    name: body.name,
+    number: body.number,
+  };
 
-  // Tries to find a person with that id
-  while (
-    persons.find((p) => {
-      return Number(p.id) === newId;
+  Person.findByIdAndUpdate(personId, person, { new: true })
+    .then((updatedPerson) => {
+      console.log(updatedPerson);
+      response.json(updatedPerson);
     })
-  ) {
-    newId = Math.ceil(Math.random() * 10000000000);
+    .catch((error) => next(error));
+});
+
+/* MIDDLEWARE 2 */
+
+const errorHandler = (error, request, response, next) => {
+  console.log("JUST A TEST FOR ERRORS.");
+
+  if (error.name === "CastError") {
+    response.status(400).send({ error: "Malformed id." });
   }
 
-  return newId;
+  // For other errors, forward to default express error handler
+  next(error);
 };
+app.use(errorHandler);
 
 /* APP CONFIG */
 

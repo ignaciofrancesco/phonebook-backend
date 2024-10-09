@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 // Listing all of the contacts
-if (process.argv.length == 3) {
+if (process.argv.length === 3) {
   const password = process.argv[2];
   const url = `mongodb+srv://ignaciofrancesco:${password}@cluster0.rwj6k.mongodb.net/PhonebookApp?retryWrites=true&w=majority&appName=Cluster0`;
 
@@ -29,7 +29,7 @@ if (process.argv.length == 3) {
   });
 
   // Add entries to the phonebook
-} else if (process.argv.length == 5) {
+} else if (process.argv.length === 5) {
   const password = process.argv[2];
   const newName = process.argv[3];
   const newNumber = process.argv[4];
@@ -52,7 +52,7 @@ if (process.argv.length == 3) {
     number: newNumber,
   });
 
-  newPerson.save().then((result) => {
+  newPerson.save().then(() => {
     console.log(`Added ${newName} number ${newNumber} to phonebook.`);
     mongoose.connection.close();
   });

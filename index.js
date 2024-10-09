@@ -86,14 +86,14 @@ app.post("/api/persons", (request, response, next) => {
   if (!data.name || !data.number) {
     return response
       .status(400)
-      .json({ error: `The name or the number are missing.` });
+      .json({ error: "The name or the number are missing." });
   }
 
   // Validate no duplicates
   /* const personDuplicate = persons.find((p) => {
     return p.name.trim().toUpperCase() === data.name.trim().toUpperCase();
   });
- 
+
   if (personDuplicate) {
     return response.status(409).json({
       error: `The person ${data.name} already exists in the phonebook.`,
